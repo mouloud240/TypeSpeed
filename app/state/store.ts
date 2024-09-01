@@ -1,5 +1,4 @@
 import { create } from "zustand";
-//pushed correctly this time
 export interface statsState {
   accuarcy: number;
   wpm: number;
