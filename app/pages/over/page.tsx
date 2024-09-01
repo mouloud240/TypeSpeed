@@ -1,6 +1,5 @@
 "use client"
 import { statsState, useStatsStore } from "@/app/state/store"
-import { useSearchParams } from "next/navigation"
 
 const Page = () => {
   const accuarcy=useStatsStore((state)=>state.accuarcy) 
