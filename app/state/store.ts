@@ -1,4 +1,7 @@
 import { create } from "zustand";
+const axios=require('axios')
+const APIKEY=process.env.NEXT_PUBLIC_API_KEY
+const URL=`https://api.api-ninjas.com/v1/quotes?category=happiness&X-Api-Key=${APIKEY}`
 export interface statsState {
   accuarcy: number;
   wpm: number;
@@ -22,5 +25,23 @@ export const useStatsStore = create<storeState>((set) => ({
   editWpm:(nWpm:number)=>set(()=>({wpm:nWpm}))
 
 }));
+interface phraseState{
+  phrase:string;
+  fetchPhrase:()=>Promise<string>
+}
+export const usePhraseStore=create<phraseState>((set)=>({
+  phrase:"",
+  fetchPhrase:async() =>{
+    try{
 
-export type storeType = ReturnType<typeof useStatsStore>;
+    const response=await axios.get(URL)
+    const phrase=response.data[0].quote
+      set(()=>({phrase:phrase}))
+    }catch(e){
+      console.log(e)
+      return "erro"
+    }
+    
+   return "" 
+  } 
+}))
