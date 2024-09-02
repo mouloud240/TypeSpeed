@@ -3,14 +3,20 @@
 import { useRouter } from "next/navigation";
 import { useEffect, useState, useCallback } from "react";
 import { usePhraseStore, useStatsStore } from "./state/store";
-
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
 const Page = () => {
   const targetText = usePhraseStore((state) => state.phrase);
-  const initCounter = 15;
+  const [initCounter,setInitCounter]=useState(10000)
   const fetchPhrase = usePhraseStore((state) => state.fetchPhrase);
+  
   const changeAccuracy = useStatsStore((state) => state.editAccuaracy);
   const changeWPm = useStatsStore((state) => state.editWpm);
-
   const router = useRouter();
   const [text, setText] = useState("");
   const [counter, setCounter] = useState(initCounter);
@@ -30,9 +36,12 @@ const Page = () => {
 
   const getWpm = useCallback(() => {
     return Math.floor((getWordsWritten() * 60) / (initCounter - counter));
-  }, [counter, getWordsWritten]);
+  }, [counter, getWordsWritten, initCounter]);
 
   const getAccuracy = useCallback(() => {
+    if (text.length==0){
+      return 0
+    }
     let correct = 0;
     for (let i = 0; i < text.length; i++) {
       if (text[i] === targetText[i]) {
@@ -47,7 +56,7 @@ const Page = () => {
     setText("");
     setCounter(initCounter);
     setPhraseGenerated(true);
-  }, [fetchPhrase]);
+  }, [fetchPhrase, initCounter]);
 
   useEffect(() => {
     if (phraseGenerated) {
@@ -108,7 +117,26 @@ const Page = () => {
   }, [text]);
 
   return (
-    <div className="flex flex-col justify-center items-center">
+    <div className="flex flex-col justify-center items-center h[100vh]">
+      <h1 className="mb-12 text-5xl mt-12 text-yellow-500 font-bold mx-auto">
+        Welcome To speed Type
+      </h1>
+      <Select  onValueChange={(value)=>{setInitCounter(parseInt(value))}} >
+  <SelectTrigger className="text-white w-[200px] h-12 bg-yellow-500">
+          
+          
+
+
+
+    <SelectValue placeholder="Timer" />
+  </SelectTrigger>
+  <SelectContent className="text-xl font-semibold bg-yellow-300 text-white">
+    <SelectItem className="" value="15">15 s</SelectItem>
+    <SelectItem value="30">30 s</SelectItem>
+    <SelectItem value="60">60 s</SelectItem>
+  </SelectContent>
+</Select>
+
       <ul className="flex flex-wrap p-10 w-[40%] h-full">
         {targetText.split("").map((element, index) => {
           let style = "";
@@ -137,7 +165,8 @@ const Page = () => {
         })}
       </ul>
       <p className="text-xl font-bold text-white mx-auto">{counter}</p>
-      <button className="text-white" onClick={handleRestart}>
+
+      <button className="text-white bg-yellow-500 rounded-xl p-4 mt-4 text-3xl" onClick={handleRestart}>
         Restart + New Phrase
       </button>
     </div>
