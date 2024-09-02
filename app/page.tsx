@@ -12,7 +12,7 @@ import {
 } from "@/components/ui/select"
 const Page = () => {
   const targetText = usePhraseStore((state) => state.phrase);
-  const [initCounter,setInitCounter]=useState(10000)
+  const [initCounter,setInitCounter]=useState(30)
   const fetchPhrase = usePhraseStore((state) => state.fetchPhrase);
   
   const changeAccuracy = useStatsStore((state) => state.editAccuaracy);
