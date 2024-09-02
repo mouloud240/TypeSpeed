@@ -14,6 +14,7 @@ const Page = () => {
   const router = useRouter();
   const [text, setText] = useState("");
   const [counter, setCounter] = useState(initCounter);
+  const [phraseGenerated, setPhraseGenerated] = useState(false);
 
   const getWordsWritten = useCallback(() => {
     const targetWords = targetText.split(" ");
@@ -40,36 +41,43 @@ const Page = () => {
     }
     return Math.floor((correct / text.length) * 100);
   }, [text, targetText]);
-  useEffect(()=>{
-  fetchPhrase()
-  },[fetchPhrase])
+
+  const handleRestart = useCallback(async () => {
+    await fetchPhrase();
+    setText("");
+    setCounter(initCounter);
+    setPhraseGenerated(true);
+  }, [fetchPhrase]);
+
+  useEffect(() => {
+    if (phraseGenerated) {
+      const intervalId = setInterval(() => {
+        setCounter((prevCounter) => prevCounter - 1);
+      }, 1000);
+
+      return () => clearInterval(intervalId);
+    }
+  }, [phraseGenerated]);
+
+  useEffect(() => {
+    handleRestart();
+  }, [handleRestart]);
+
   useEffect(() => {
     if (text.length === targetText.length && text.length !== 0) {
       changeAccuracy(getAccuracy());
       changeWPm(getWpm());
-      router.push('./pages/over/');
+      router.push("./pages/over/");
       return;
     }
 
     if (counter === 0) {
       changeAccuracy(getAccuracy());
       changeWPm(getWpm());
-      router.push('./pages/over/');
+      router.push("./pages/over/");
       return;
     }
-
-    const intervalId = setTimeout(() => {
-      setCounter((prevCounter) => prevCounter - 1);
-    }, 1000);
-
-    return () => clearTimeout(intervalId);
-  }, [changeAccuracy, changeWPm, counter, fetchPhrase, getAccuracy, getWpm, router, targetText.length, text.length]);
-
-  const handleRestart = useCallback(() => {
-    fetchPhrase();
-    setText("");
-    setCounter(initCounter);
-  }, [fetchPhrase]);
+  }, [changeAccuracy, changeWPm, counter, getAccuracy, getWpm, router, targetText.length, text.length]);
 
   useEffect(() => {
     const handleTyping = (e: KeyboardEvent) => {
@@ -78,7 +86,8 @@ const Page = () => {
         e.keyCode === 8 ||
         e.keyCode === 32 ||
         e.keyCode === 188 ||
-        e.keyCode === 110;
+        e.keyCode === 110||
+      e.keyCode===52
 
       if (!isAllowed) {
         e.preventDefault();
@@ -129,7 +138,7 @@ const Page = () => {
       </ul>
       <p className="text-xl font-bold text-white mx-auto">{counter}</p>
       <button className="text-white" onClick={handleRestart}>
-        restart + New Phrase
+        Restart + New Phrase
       </button>
     </div>
   );
