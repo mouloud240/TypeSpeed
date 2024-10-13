@@ -137,7 +137,7 @@ const Page = () => {
   </SelectContent>
 </Select>
 
-      <ul className="flex flex-wrap p-10 w-[40%] h-full">
+      <ul className="flex flex-wrap p-10 w-[80%] h-full">
         {targetText.split("").map((element, index) => {
           let style = "";
           if (index === text.length) {
